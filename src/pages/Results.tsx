@@ -73,44 +73,12 @@ const Results: React.FC<Props> = ({ toggleTheme, theme }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // ── Save PDF using html2canvas + jsPDF ──
-  const handleSavePDF = async () => {
-    if (!printableRef.current) return;
-    setSavingPDF(true);
-    try {
-      const { default: html2canvas } = await import('html2canvas');
-      const { default: jsPDF }       = await import('jspdf');
-
-      const el = printableRef.current;
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: document.documentElement.getAttribute('data-theme') === 'dark' ? '#0f172a' : '#ffffff',
-        windowWidth: el.scrollWidth,
-        windowHeight: el.scrollHeight,
-      });
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-      const pageW = pdf.internal.pageSize.getWidth();
-      const pageH = pdf.internal.pageSize.getHeight();
-      const imgW  = pageW;
-      const imgH  = (canvas.height * imgW) / canvas.width;
-      let y = 0;
-
-      while (y < imgH) {
-        pdf.addImage(imgData, 'PNG', 0, -y, imgW, imgH);
-        if (y + pageH < imgH) pdf.addPage();
-        y += pageH;
-      }
-
-      const fileName = `StudyGen_${activeTab}_${new Date().toLocaleDateString('en-IN').replace(/\//g, '-')}.pdf`;
-      pdf.save(fileName);
-    } catch (err) {
-      console.error('PDF save failed:', err);
-      alert('Could not save PDF. Please try the Print option instead.');
-    }
-    setSavingPDF(false);
+  // ── Save PDF / Print Preview ──
+  const handleSavePDF = () => {
+    // We rely on the browser's native print dialog which allows "Save as PDF"
+    // and correctly renders CSS text colors (resolving dark mode unreadability).
+    // The CSS `@media print` rules will ensure only the content is printed.
+    window.print();
   };
 
   // ── Translate summary bi-directionally ──
