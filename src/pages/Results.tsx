@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import {
-  Copy, RefreshCw, Download, Printer, Check,
+  Copy, RefreshCw, Download, Check,
   AlertCircle, Languages, Search, Loader2, Plus, X, RotateCcw
 } from 'lucide-react';
 import { translateSummary, analyzeWord } from '../services/ai';
@@ -31,7 +31,6 @@ const Results: React.FC<Props> = ({ toggleTheme, theme }) => {
   const [copied, setCopied] = useState(false);
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState(false);
-  const [savingPDF, setSavingPDF] = useState(false);
   const printableRef = useRef<HTMLDivElement>(null);
 
   // ── Summary Translation ──
@@ -162,12 +161,8 @@ const Results: React.FC<Props> = ({ toggleTheme, theme }) => {
             <button className="action-btn" onClick={() => navigate('/upload')}>
               <RefreshCw size={18} /> New
             </button>
-            <button className="action-btn save-pdf-btn" onClick={handleSavePDF} disabled={savingPDF}>
-              {savingPDF ? <Loader2 size={18} className="spinner" /> : <Download size={18} />}
-              {savingPDF ? 'Saving…' : 'Save PDF'}
-            </button>
-            <button className="action-btn" onClick={() => window.print()}>
-              <Printer size={18} /> Print
+            <button className="action-btn save-pdf-btn" onClick={handleSavePDF}>
+              <Download size={18} /> Save PDF / Print
             </button>
           </div>
         </header>
